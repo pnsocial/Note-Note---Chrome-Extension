@@ -2,6 +2,8 @@
 
 Replaces the **new tab** page with a **daily Markdown** journal stored locally in `chrome.storage.local` (no network upload; no cloud sync by default — the extension only uses the local storage API, not `chrome.storage.sync`).
 
+![Daily Markdown Note — new tab editor (light theme)](docs/images/readme-screenshot.png)
+
 ## Features
 
 - **One page per day** (only today is editable; past days are read-only).
