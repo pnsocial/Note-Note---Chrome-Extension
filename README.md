@@ -44,6 +44,14 @@ Workflow [**Build**](.github/workflows/build.yml) chạy tự động khi **push
 
 > Lưu ý: Artifact trên GitHub có thời hạn lưu theo cài đặt repo/organization (mặc định thường vài chục ngày).
 
+### Cảnh báo Node.js trên GitHub Actions (đã xử lý)
+
+GitHub đang loại bỏ **Node.js 20** làm runtime cho các action JavaScript (mặc định chuyển **Node.js 24** từ tháng 6/2026; gỡ Node 20 khỏi runner khoảng **16/9/2026**). Với bản cũ, `actions/checkout@v4` và `actions/upload-artifact@v4` có thể báo cảnh báo kiểu:
+
+> Node.js 20 actions are deprecated …
+
+Workflow hiện dùng **`actions/checkout@v5`** và **`actions/upload-artifact@v5`** (chạy trên runtime Node 24 của action), nên không cần đặt `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` trong file workflow. Chi tiết: [GitHub Blog — deprecation of Node 20 on Actions runners](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
+
 [![Build](https://github.com/pnsocial/Note-Note---Chrome-Extension/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/pnsocial/Note-Note---Chrome-Extension/actions/workflows/build.yml)
 
 ## Giấy phép

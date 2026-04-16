@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Validate manifest.json
         run: python3 -m json.tool manifest.json > /dev/null
@@ -28,7 +28,7 @@ jobs:
             icons
 
       - name: Upload ZIP artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: extension-zip
           path: dist/daily-markdown-note.zip
