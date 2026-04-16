@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Note</title>
+    <script src="js/theme-boot.js"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="header-top">
+          <h1 class="title">Daily Markdown Note</h1>
+          <div class="header-actions" role="toolbar" aria-label="Thao tác">
+            <button
+              type="button"
+              class="toolbar-btn toolbar-btn--icon"
+              id="btn-export-all-zip"
+              title="Tải tất cả ghi chú (.md) trong một file ZIP"
+              aria-label="Tải tất cả ghi chú Markdown trong file ZIP"
+            >
+              <svg
+                class="toolbar-btn__icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path
+                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="toolbar-btn toolbar-btn--icon"
+              id="btn-calendar-toggle"
+              aria-expanded="false"
+              aria-controls="calendar-popover"
+              aria-haspopup="dialog"
+              title="Lịch tháng — nhấp ngày để cuộn tới ghi chú"
+              aria-label="Mở lịch tháng"
+            >
+              <svg
+                class="toolbar-btn__icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="toolbar-btn toolbar-btn--icon"
+              id="btn-search-toggle"
+              aria-expanded="false"
+              aria-controls="header-search-row"
+              title="Tìm trong ghi chú"
+              aria-label="Tìm trong ghi chú"
+            >
+              <svg
+                class="toolbar-btn__icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="toolbar-btn toolbar-btn--icon"
+              id="btn-theme-toggle"
+              aria-pressed="false"
+              title="Chuyển sang giao diện tối"
+              aria-label="Chuyển sang giao diện tối"
+            >
+              <svg
+                class="toolbar-btn__icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="toolbar-btn toolbar-btn--icon toolbar-btn--primary"
+              id="btn-history-toggle"
+              aria-expanded="true"
+              aria-controls="history-body"
+              disabled
+              title="Thu gọn lịch sử"
+              aria-label="Thu gọn lịch sử"
+            >
+              <svg
+                class="toolbar-btn__icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m18 15-6-6-6 6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <p class="meta" id="meta-line" aria-live="polite"></p>
+        <div class="header-search-row" id="header-search-row" hidden>
+          <div class="note-search-wrap">
+            <label for="note-search" class="visually-hidden"
+              >Tìm trong ghi chú theo ngày hoặc nội dung</label
+            >
+            <input
+              type="search"
+              id="note-search"
+              class="note-search-input"
+              placeholder="Tìm theo ngày hoặc nội dung…"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+        </div>
+        <p class="search-hint" id="search-hint" hidden aria-live="polite"></p>
+      </header>
+
+      <section
+        class="today-section"
+        id="today-section"
+        aria-labelledby="today-heading"
+      >
+        <div class="today-heading-row">
+          <h2 id="today-heading" class="section-heading today-heading"></h2>
+          <div
+            class="today-heading-row__actions"
+            role="group"
+            aria-label="Thống kê và xuất ghi chú hôm nay"
+          >
+            <div
+              class="word-stats"
+              id="word-stats"
+              aria-live="polite"
+              title="Ghi chú hôm nay (Markdown thuần)"
+            >
+              <span class="word-stats__line">
+                <strong id="word-stats-count">0</strong> từ
+              </span>
+              <span class="word-stats__line word-stats__muted">
+                ~<strong id="word-stats-read">0</strong> phút đọc
+              </span>
+            </div>
+            <button
+              type="button"
+              class="note-export-btn note-export-btn--icon"
+              id="btn-export-today"
+              title="Tải ghi chú ngày này dưới dạng YYYY-MM-DD.md"
+              aria-label="Xuất ghi chú hôm nay ra file Markdown"
+            >
+              <svg
+                class="note-export-btn__icon"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div id="today-editor-shell" class="today-editor-shell">
+          <div id="today-editor-chrome" class="today-editor-chrome">
+            <div
+              id="format-toolbar"
+              class="format-toolbar"
+              role="toolbar"
+              aria-label="Định dạng nhanh"
+            ></div>
+            <hr class="today-editor-rule" />
+          </div>
+          <label for="today-editor" class="visually-hidden"
+            >Ghi chú Markdown hôm nay</label
+          >
+          <textarea
+            id="today-editor"
+            class="today-editor"
+            spellcheck="true"
+            rows="16"
+            placeholder="Gõ Markdown; nhấp ra khỏi khung soạn để xem đã render — nhấp vào bản hiển thị để sửa lại."
+          ></textarea>
+          <div
+            id="today-rendered"
+            class="markdown-body today-rendered"
+            hidden
+            tabindex="0"
+            role="document"
+            aria-label="Ghi chú hôm nay (đã hiển thị). Nhấp để sửa nguồn Markdown."
+          ></div>
+        </div>
+      </section>
+
+      <section
+        id="history-panel"
+        class="history-panel"
+        aria-labelledby="history-heading"
+        hidden
+      >
+        <div id="history-body" class="history-body">
+          <h2 id="history-heading" class="section-heading history-heading">
+            Lịch sử (chỉ đọc)
+          </h2>
+          <p class="hint">
+            Các ngày trước chỉ xem và sao chép — không chỉnh sửa (kỷ luật không sửa quá
+            khứ).
+          </p>
+          <div id="legacy-entries" class="legacy-entries"></div>
+        </div>
+      </section>
+    </div>
+
+    <div
+      id="calendar-popover"
+      class="calendar-popover"
+      hidden
+      role="dialog"
+      aria-label="Lịch theo tháng"
+    >
+      <div id="mini-calendar-root" class="mini-calendar-root"></div>
+    </div>
+
+    <script src="js/purify.min.js"></script>
+    <script src="js/marked.min.js"></script>
+    <script type="module" src="js/editor.js"></script>
+  </body>
+</html>
