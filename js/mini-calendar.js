@@ -1,5 +1,5 @@
 /**
- * Lịch tháng nhỏ: chấm cho ngày có ghi chú, nhấp ngày ≤ hôm nay để cuộn tới mục tương ứng.
+ * Small month calendar: dot on days with notes; click a day ≤ today to scroll to that entry.
  */
 
 /**
@@ -35,7 +35,7 @@ export function mountMiniCalendar(container, api) {
     const firstDow = new Date(y, m, 1).getDay();
     const monday0 = (firstDow + 6) % 7;
     const dim = daysInMonth(y, m);
-    const monthTitle = new Intl.DateTimeFormat("vi-VN", {
+    const monthTitle = new Intl.DateTimeFormat("en-US", {
       month: "long",
       year: "numeric",
     }).format(new Date(y, m, 1));
@@ -49,7 +49,7 @@ export function mountMiniCalendar(container, api) {
     const prev = document.createElement("button");
     prev.type = "button";
     prev.className = "mini-cal__nav-btn";
-    prev.setAttribute("aria-label", "Tháng trước");
+    prev.setAttribute("aria-label", "Previous month");
     prev.textContent = "‹";
     prev.addEventListener("click", () => {
       if (viewMonth === 0) {
@@ -66,7 +66,7 @@ export function mountMiniCalendar(container, api) {
     const next = document.createElement("button");
     next.type = "button";
     next.className = "mini-cal__nav-btn";
-    next.setAttribute("aria-label", "Tháng sau");
+    next.setAttribute("aria-label", "Next month");
     next.textContent = "›";
     next.addEventListener("click", () => {
       if (viewMonth === 11) {
@@ -82,7 +82,7 @@ export function mountMiniCalendar(container, api) {
 
     const wk = document.createElement("div");
     wk.className = "mini-cal__weekdays";
-    for (const lbl of ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]) {
+    for (const lbl of ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]) {
       const s = document.createElement("span");
       s.textContent = lbl;
       wk.append(s);

@@ -1,6 +1,6 @@
 /**
- * Thanh định dạng cố định trong khung soạn (Markdown).
- * Lưu vùng chọn trước khi blur bằng pointerdown capture trên thanh công cụ.
+ * Fixed Markdown formatting toolbar in the editor.
+ * Saves selection before blur via pointerdown capture on the toolbar.
  */
 
 /**
@@ -22,21 +22,21 @@ export function initFormatToolbar(textarea, toolbarRoot) {
   toolbarRoot.innerHTML = `
     <div class="format-toolbar__inner">
       <span class="format-toolbar__sep" aria-hidden="true"></span>
-      ${btn("bold", "In đậm **", iconBold())}
-      ${btn("italic", "Nghiêng *", iconItalic())}
-      ${btn("underline", "Gạch chân <u>", iconUnderline())}
+      ${btn("bold", "Bold **", iconBold())}
+      ${btn("italic", "Italic *", iconItalic())}
+      ${btn("underline", "Underline <u>", iconUnderline())}
       <span class="format-toolbar__sep" aria-hidden="true"></span>
-      ${btn("ol", "Danh sách đánh số", iconOl())}
-      ${btn("ul", "Danh sách gạch đầu", iconUl())}
-      ${btn("task", "Danh sách checkbox (GFM)", iconTask())}
-      ${btn("outdent", "Giảm thụt", iconOutdent())}
-      ${btn("indent", "Tăng thụt", iconIndent())}
+      ${btn("ol", "Numbered list", iconOl())}
+      ${btn("ul", "Bullet list", iconUl())}
+      ${btn("task", "Task list (GFM)", iconTask())}
+      ${btn("outdent", "Outdent", iconOutdent())}
+      ${btn("indent", "Indent", iconIndent())}
       <span class="format-toolbar__sep" aria-hidden="true"></span>
-      ${btn("newline", "Xuống dòng", iconNewline())}
+      ${btn("newline", "New line", iconNewline())}
     </div>
   `;
 
-  /** Giữ selection trước khi nút cướp focus (capture). */
+  /** Preserve selection before buttons steal focus (capture). */
   toolbarRoot.addEventListener(
     "pointerdown",
     () => {

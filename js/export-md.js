@@ -1,5 +1,5 @@
 /**
- * Xuất một ghi chú ra file .md (tên = YYYY-MM-DD.md).
+ * Export a single note as a .md file (filename = YYYY-MM-DD.md).
  */
 
 /**
@@ -21,8 +21,8 @@ function triggerDownload(filename, text) {
 
 /**
  * @param {string} dateKey YYYY-MM-DD
- * @param {string} text nội dung Markdown
- * @returns {boolean} false nếu nội dung rỗng (không tải file)
+ * @param {string} text Markdown body
+ * @returns {boolean} false if empty (no file downloaded)
  */
 export function exportSingleMarkdownFile(dateKey, text) {
   if (String(text ?? "").trim() === "") {

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Daily Markdown Note",
   "version": "1.0.0",
-  "description": "Tab mới là sổ ghi chú Markdown theo ngày, lưu cục bộ. Quyền storage: bắt buộc cho chrome.storage.local (ghi chú chỉ trên máy bạn; không gửi mạng; không đồng bộ đám mây mặc định — extension chỉ dùng API local, không dùng chrome.storage.sync).",
+  "description": "New tab becomes a daily Markdown journal stored locally. Uses chrome.storage.local only (on your device; no network upload; no cloud sync by default — local API only, not chrome.storage.sync).",
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",

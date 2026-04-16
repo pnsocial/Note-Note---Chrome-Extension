@@ -1,6 +1,6 @@
 /**
- * Tạo file ZIP (phương thức STORE, không nén) chứa nhiều file .md — chỉ dùng API trình duyệt.
- * Tên file ASCII (YYYY-MM-DD.md).
+ * Build a ZIP (STORE method, no compression) with multiple .md files — browser APIs only.
+ * Filenames are ASCII (YYYY-MM-DD.md).
  */
 
 /** @returns {Uint32Array} */
@@ -117,7 +117,7 @@ function buildZipStore(files) {
 
 /**
  * @param {Record<string, string>} notes
- * @param {string} [zipBasename] không có .zip
+ * @param {string} [zipBasename] without .zip extension
  */
 export function downloadNotesAsZip(notes, zipBasename = "daily-markdown-notes") {
   const entries = Object.keys(notes)

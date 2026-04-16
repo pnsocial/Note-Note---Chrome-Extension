@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,13 +12,13 @@
       <header class="header">
         <div class="header-top">
           <h1 class="title">Daily Markdown Note</h1>
-          <div class="header-actions" role="toolbar" aria-label="Thao tác">
+          <div class="header-actions" role="toolbar" aria-label="Toolbar">
             <button
               type="button"
               class="toolbar-btn toolbar-btn--icon"
               id="btn-export-all-zip"
-              title="Tải tất cả ghi chú (.md) trong một file ZIP"
-              aria-label="Tải tất cả ghi chú Markdown trong file ZIP"
+              title="Download all notes (.md) as one ZIP file"
+              aria-label="Download all Markdown notes as a ZIP file"
             >
               <svg
                 class="toolbar-btn__icon"
@@ -45,8 +45,8 @@
               aria-expanded="false"
               aria-controls="calendar-popover"
               aria-haspopup="dialog"
-              title="Lịch tháng — nhấp ngày để cuộn tới ghi chú"
-              aria-label="Mở lịch tháng"
+              title="Month calendar — click a day to scroll to that note"
+              aria-label="Open month calendar"
             >
               <svg
                 class="toolbar-btn__icon"
@@ -71,8 +71,8 @@
               id="btn-search-toggle"
               aria-expanded="false"
               aria-controls="header-search-row"
-              title="Tìm trong ghi chú"
-              aria-label="Tìm trong ghi chú"
+              title="Search notes"
+              aria-label="Search notes"
             >
               <svg
                 class="toolbar-btn__icon"
@@ -94,8 +94,8 @@
               class="toolbar-btn toolbar-btn--icon"
               id="btn-theme-toggle"
               aria-pressed="false"
-              title="Chuyển sang giao diện tối"
-              aria-label="Chuyển sang giao diện tối"
+              title="Switch to dark theme"
+              aria-label="Switch to dark theme"
             >
               <svg
                 class="toolbar-btn__icon"
@@ -118,8 +118,8 @@
               aria-expanded="true"
               aria-controls="history-body"
               disabled
-              title="Thu gọn lịch sử"
-              aria-label="Thu gọn lịch sử"
+              title="Collapse history"
+              aria-label="Collapse history"
             >
               <svg
                 class="toolbar-btn__icon"
@@ -141,13 +141,13 @@
         <div class="header-search-row" id="header-search-row" hidden>
           <div class="note-search-wrap">
             <label for="note-search" class="visually-hidden"
-              >Tìm trong ghi chú theo ngày hoặc nội dung</label
+              >Search notes by date or content</label
             >
             <input
               type="search"
               id="note-search"
               class="note-search-input"
-              placeholder="Tìm theo ngày hoặc nội dung…"
+              placeholder="Search by date or content…"
               autocomplete="off"
               spellcheck="false"
             />
@@ -166,27 +166,27 @@
           <div
             class="today-heading-row__actions"
             role="group"
-            aria-label="Thống kê và xuất ghi chú hôm nay"
+            aria-label="Today’s stats and export"
           >
             <div
               class="word-stats"
               id="word-stats"
               aria-live="polite"
-              title="Ghi chú hôm nay (Markdown thuần)"
+              title="Today’s note (plain Markdown)"
             >
               <span class="word-stats__line">
-                <strong id="word-stats-count">0</strong> từ
+                <strong id="word-stats-count">0</strong> words
               </span>
               <span class="word-stats__line word-stats__muted">
-                ~<strong id="word-stats-read">0</strong> phút đọc
+                ~<strong id="word-stats-read">0</strong> min read
               </span>
             </div>
             <button
               type="button"
               class="note-export-btn note-export-btn--icon"
               id="btn-export-today"
-              title="Tải ghi chú ngày này dưới dạng YYYY-MM-DD.md"
-              aria-label="Xuất ghi chú hôm nay ra file Markdown"
+              title="Download today’s note as YYYY-MM-DD.md"
+              aria-label="Export today’s note as Markdown"
             >
               <svg
                 class="note-export-btn__icon"
@@ -212,19 +212,19 @@
               id="format-toolbar"
               class="format-toolbar"
               role="toolbar"
-              aria-label="Định dạng nhanh"
+              aria-label="Quick formatting"
             ></div>
             <hr class="today-editor-rule" />
           </div>
           <label for="today-editor" class="visually-hidden"
-            >Ghi chú Markdown hôm nay</label
+            >Today’s Markdown note</label
           >
           <textarea
             id="today-editor"
             class="today-editor"
             spellcheck="true"
             rows="16"
-            placeholder="Gõ Markdown; nhấp ra khỏi khung soạn để xem đã render — nhấp vào bản hiển thị để sửa lại."
+            placeholder="Type Markdown; click outside the editor to see the preview — click the preview to edit again."
           ></textarea>
           <div
             id="today-rendered"
@@ -232,7 +232,7 @@
             hidden
             tabindex="0"
             role="document"
-            aria-label="Ghi chú hôm nay (đã hiển thị). Nhấp để sửa nguồn Markdown."
+            aria-label="Today’s note (rendered). Click to edit Markdown source."
           ></div>
         </div>
       </section>
@@ -245,11 +245,10 @@
       >
         <div id="history-body" class="history-body">
           <h2 id="history-heading" class="section-heading history-heading">
-            Lịch sử (chỉ đọc)
+            History (read-only)
           </h2>
           <p class="hint">
-            Các ngày trước chỉ xem và sao chép — không chỉnh sửa (kỷ luật không sửa quá
-            khứ).
+            Past days are view and copy only — no editing (don’t rewrite the past).
           </p>
           <div id="legacy-entries" class="legacy-entries"></div>
         </div>
@@ -261,7 +260,7 @@
       class="calendar-popover"
       hidden
       role="dialog"
-      aria-label="Lịch theo tháng"
+      aria-label="Month calendar"
     >
       <div id="mini-calendar-root" class="mini-calendar-root"></div>
     </div>

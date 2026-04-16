@@ -1,4 +1,4 @@
-# Khi push tag v<phiên_bản> (trùng manifest.json "version"), tạo GitHub Release + ZIP cài Chrome.
+# On push of tag v<version> matching manifest.json "version", create GitHub Release + Chrome-installable ZIP.
 name: Release
 
 on:
@@ -16,20 +16,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Kiểm tra tag khớp manifest.json
+      - name: Verify tag matches manifest.json
         id: meta
         run: |
           set -euo pipefail
           M=$(python3 -c "import json; print(json.load(open('manifest.json'))['version'])")
           TAG="${GITHUB_REF_NAME}"
           if [[ "$TAG" != "v${M}" ]]; then
-            echo "::error::Tag phải là v + đúng trường \"version\" trong manifest.json. manifest=$M tag=$TAG (ví dụ: git tag v${M})"
+            echo "::error::Tag must be v + manifest.json \"version\". manifest=$M tag=$TAG (e.g. git tag v${M})"
             exit 1
           fi
           echo "manifest_version=${M}" >> "$GITHUB_OUTPUT"
           echo "zip_name=daily-markdown-note-${M}.zip" >> "$GITHUB_OUTPUT"
 
-      - name: Đóng gói extension (ZIP)
+      - name: Package extension (ZIP)
         run: |
           set -euo pipefail
           mkdir -p dist
@@ -40,7 +40,7 @@ jobs:
             js \
             icons
 
-      - name: Tạo GitHub Release + đính kèm ZIP
+      - name: Create GitHub Release with ZIP asset
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -48,13 +48,13 @@ jobs:
           TAG="${GITHUB_REF_NAME}"
           ZIP="dist/${{ steps.meta.outputs.zip_name }}"
           cat > release_notes.md << EOF
-          ## Cài đặt trên Chrome
+          ## Install on Chrome
 
-          1. Trong mục **Assets** bên dưới, tải file \`${{ steps.meta.outputs.zip_name }}\`.
-          2. Giải nén — thư mục gốc (cấp đầu tiên) phải có \`manifest.json\`.
-          3. Mở \`chrome://extensions\` → bật **Chế độ dành cho nhà phát triển** → **Tải tiện ích đã giải nén** → chọn thư mục đã giải nén.
+          1. Under **Assets** below, download \`${{ steps.meta.outputs.zip_name }}\`.
+          2. Unzip — the top-level folder must contain \`manifest.json\`.
+          3. Open \`chrome://extensions\` → enable **Developer mode** → **Load unpacked** → select the unzipped folder.
 
-          Phiên bản: **${{ steps.meta.outputs.manifest_version }}** (tag \`${TAG}\`).
+          Version: **${{ steps.meta.outputs.manifest_version }}** (tag \`${TAG}\`).
           EOF
           gh release create "$TAG" "$ZIP" \
             --title "Daily Markdown Note ${TAG}" \

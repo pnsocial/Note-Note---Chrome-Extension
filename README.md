@@ -1,89 +1,89 @@
 # Daily Markdown Note — Chrome Extension
 
-Extension thay **tab mới** bằng một sổ ghi **Markdown theo ngày**, lưu cục bộ qua `chrome.storage.local` (không gửi dữ liệu ra mạng, không đồng bộ đám mây mặc định).
+Replaces the **new tab** page with a **daily Markdown** journal stored locally in `chrome.storage.local` (no network upload; no cloud sync by default — the extension only uses the local storage API, not `chrome.storage.sync`).
 
-## Tính năng chính
+## Features
 
-- Ghi chú **một ngày một trang** (chỉ sửa được ngày hôm nay; ngày trước chỉ xem).
-- **Markdown** với xem trước đã render (DOMPurify + marked), thanh định dạng nhanh.
-- **Tìm kiếm**, **lịch tháng** (popover), **xuất** từng ngày hoặc **ZIP** toàn bộ `.md`.
-- **Giao diện sáng/tối**, thống kê **số từ / thời gian đọc** gần tiêu đề ngày.
-- Phím tắt: **Ctrl/⌘ + Shift + Y** (theme), **Ctrl/⌘ + Shift + G** (ô tìm kiếm).
+- **One page per day** (only today is editable; past days are read-only).
+- **Markdown** with rendered preview (DOMPurify + marked) and a quick format toolbar.
+- **Search**, **month calendar** (popover), **export** a single day or **ZIP** all `.md` files.
+- **Light/dark theme**, **word count / reading time** next to the today heading.
+- Shortcuts: **Ctrl/⌘ + Shift + Y** (theme), **Ctrl/⌘ + Shift + G** (search).
 
-## Tải bản phát hành (ZIP — cài Chrome)
+## Install from a release (ZIP)
 
-Bản build chính thức nằm trong **GitHub Releases** (file ZIP đính kèm, không hết hạn như Artifact của Actions):
+Official builds are attached to **GitHub Releases** (permanent assets, unlike Actions artifacts):
 
-1. Mở trang [**Releases**](https://github.com/pnsocial/Note-Note---Chrome-Extension/releases) → chọn bản mới nhất hoặc [**Latest**](https://github.com/pnsocial/Note-Note---Chrome-Extension/releases/latest).
-2. Trong mục **Assets**, tải `daily-markdown-note-<phiên_bản>.zip`.
-3. Giải nén — thư mục gốc (cấp đầu tiên sau khi giải nén) phải có `manifest.json`.
-4. Chrome → `chrome://extensions` → bật **Chế độ dành cho nhà phát triển** → **Tải tiện ích đã giải nén** → chọn thư mục đó.
+1. Open [**Releases**](https://github.com/pnsocial/Note-Note---Chrome-Extension/releases) → pick the latest or [**Latest**](https://github.com/pnsocial/Note-Note---Chrome-Extension/releases/latest).
+2. Under **Assets**, download `daily-markdown-note-<version>.zip`.
+3. Unzip — the top-level folder must contain `manifest.json`.
+4. Chrome → `chrome://extensions` → enable **Developer mode** → **Load unpacked** → choose that folder.
 
-> ZIP trong Release được tạo bởi workflow [**Release**](.github/workflows/release.yml) mỗi khi có **tag** dạng `v*` trùng với trường `"version"` trong `manifest.json` (ví dụ manifest `1.0.0` → tag `v1.0.0`).
+> Release ZIPs are produced by the [**Release**](.github/workflows/release.yml) workflow whenever a **`v*`** tag is pushed that matches the `"version"` field in `manifest.json` (e.g. manifest `1.0.0` → tag `v1.0.0`).
 
-## Cài từ mã nguồn
+## Install from source
 
-1. Clone repo hoặc tải ZIP mã nguồn từ GitHub (khác với ZIP extension ở Releases).
-2. Mở Chrome → `chrome://extensions` → bật **Chế độ dành cho nhà phát triển**.
-3. **Tải tiện ích đã giải nén** → chọn thư mục gốc của project (chứa `manifest.json`).
+1. Clone the repo or download the source ZIP (not the extension ZIP from Releases).
+2. Chrome → `chrome://extensions` → enable **Developer mode**.
+3. **Load unpacked** → select the project root (folder containing `manifest.json`).
 
-## Cấu trúc thư mục
+## Project layout
 
-| Đường dẫn | Mô tả |
-|-----------|--------|
-| `manifest.json` | Cấu hình MV3, override tab mới |
-| `newtab.html` | Trang tab mới |
-| `css/styles.css` | Giao diện |
-| `js/` | Logic: editor, lưu trữ, render, lịch, ZIP, … |
-| `icons/` | Icon extension (PNG + SVG nguồn) |
+| Path | Description |
+|------|-------------|
+| `manifest.json` | MV3 config, new tab override |
+| `newtab.html` | New tab page |
+| `css/styles.css` | Styles |
+| `js/` | Editor, storage, renderer, calendar, ZIP, … |
+| `icons/` | Extension icons (PNG + source SVG) |
 
-Dự án **không dùng npm / bundler** — chạy trực tiếp trong trình duyệt.
+No **npm** or bundler — runs directly in the browser.
 
-## Build trên GitHub
+## GitHub Actions
 
-### Release (ZIP cho người dùng)
+### Release (ZIP for end users)
 
-Khi bạn **đẩy tag** `v<version>` trùng với `"version"` trong `manifest.json`, workflow [**Release**](.github/workflows/release.yml) sẽ:
+When you push a `v<version>` tag that matches `"version"` in `manifest.json`, the [**Release**](.github/workflows/release.yml) workflow:
 
-1. Kiểm tra tag khớp phiên bản manifest.
-2. Tạo file `daily-markdown-note-<version>.zip`.
-3. Tạo **GitHub Release** và đính kèm ZIP vào **Assets**.
+1. Verifies the tag matches the manifest version.
+2. Builds `daily-markdown-note-<version>.zip`.
+3. Creates a **GitHub Release** and attaches the ZIP under **Assets**.
 
-Ví dụ phát hành bản `1.0.0` (đã có trong `manifest.json`):
+Example for version `1.0.0` (already in `manifest.json`):
 
 ```bash
-git add manifest.json && git commit -m "Bump version 1.0.0"  # nếu vừa đổi version
+git add manifest.json && git commit -m "Bump version to 1.0.0"   # if you changed version
 git push origin main
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-### Build kiểm tra (mỗi push `main`)
+### Build (every push to `main`)
 
-Workflow [**Build**](.github/workflows/build.yml) chạy tự động khi **push** hoặc **pull request** vào nhánh `main`:
+The [**Build**](.github/workflows/build.yml) workflow runs on **push** or **pull request** to `main`:
 
-1. **Kiểm tra** `manifest.json` hợp lệ (JSON).
-2. **Đóng gói** extension thành file ZIP (`daily-markdown-note.zip`) để cài thử hoặc lưu bản build.
+1. Validates `manifest.json` (JSON).
+2. Packages the extension as `daily-markdown-note.zip` for CI smoke testing.
 
-### Xem kết quả & tải ZIP
+#### Download CI artifact
 
-1. Vào tab **Actions** trên GitHub:  
+1. Open the **Actions** tab:  
    [https://github.com/pnsocial/Note-Note---Chrome-Extension/actions](https://github.com/pnsocial/Note-Note---Chrome-Extension/actions)
-2. Chọn workflow run mới nhất (thành công có dấu ✓).
-3. Kéo xuống mục **Artifacts** → tải **`extension-zip`** (bên trong là `daily-markdown-note.zip`).
+2. Open the latest successful run.
+3. Under **Artifacts**, download **`extension-zip`** (contains `daily-markdown-note.zip`).
 
-> Lưu ý: Artifact trên GitHub có thời hạn lưu theo cài đặt repo/organization (mặc định thường vài chục ngày).
+> Artifacts expire per repository/org settings (often a few weeks).
 
-### Cảnh báo Node.js trên GitHub Actions (đã xử lý)
+### Node.js on GitHub Actions (addressed)
 
-GitHub đang loại bỏ **Node.js 20** làm runtime cho các action JavaScript (mặc định chuyển **Node.js 24** từ tháng 6/2026; gỡ Node 20 khỏi runner khoảng **16/9/2026**). Với bản cũ, `actions/checkout@v4` và `actions/upload-artifact@v4` có thể báo cảnh báo kiểu:
+GitHub is deprecating **Node.js 20** as the runtime for JavaScript actions (default moves to **Node.js 24** around June 2026; Node 20 removed from runners around **September 16, 2026**). Older `actions/checkout@v4` and `actions/upload-artifact@v4` could show warnings such as:
 
 > Node.js 20 actions are deprecated …
 
-Workflow hiện dùng **`actions/checkout@v5`** và **`actions/upload-artifact@v5`** (chạy trên runtime Node 24 của action), nên không cần đặt `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` trong file workflow. Chi tiết: [GitHub Blog — deprecation of Node 20 on Actions runners](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
+This repo uses **`actions/checkout@v5`** and **`actions/upload-artifact@v5`** (action runtime on Node 24), so you do not need `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` in the workflow. Details: [GitHub Blog — deprecation of Node 20 on Actions runners](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
 
 [![Build](https://github.com/pnsocial/Note-Note---Chrome-Extension/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/pnsocial/Note-Note---Chrome-Extension/actions/workflows/build.yml)
 
-## Giấy phép
+## License
 
-Nếu bạn chưa chọn license, có thể thêm file `LICENSE` (ví dụ MIT) trong repo sau.
+Add a `LICENSE` file (e.g. MIT) when you are ready.

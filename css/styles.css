@@ -1,5 +1,5 @@
 /**
- * Typography-first layout; mặc định theo hệ thống, có thể cố định sáng/tối qua data-theme.
+ * Typography-first layout; follows system theme unless pinned via data-theme.
  */
 
 :root {
@@ -244,7 +244,7 @@ body {
   width: 100%;
 }
 
-/* Chỉ hiện layout flex khi mở; [hidden] mặc định phải ẩn (tránh ghi đè display:none). */
+/* Show flex layout when open; [hidden] must stay hidden (avoid overriding display:none). */
 .header-search-row:not([hidden]) {
   display: flex;
   flex-wrap: wrap;
@@ -468,7 +468,7 @@ body {
   min-width: 0;
 }
 
-/* Khối chỉ đọc: không contenteditable, chặn thao tác sửa */
+/* Read-only block: not contenteditable */
 .markdown-body {
   font-size: 1rem;
   user-select: text;
@@ -578,7 +578,7 @@ body {
 }
 
 .today-rendered:empty::before {
-  content: "Trống — nhấp để viết";
+  content: "Empty — click to write";
   color: var(--muted);
   font-size: 0.95rem;
 }
@@ -595,7 +595,7 @@ body {
   border: 0;
 }
 
-/* Thanh định dạng trong khung soạn */
+/* Format toolbar inside editor */
 .format-toolbar {
   width: 100%;
 }
@@ -673,7 +673,7 @@ body {
   text-decoration: underline;
 }
 
-/* Lịch mini (tháng) */
+/* Mini month calendar */
 .mini-cal {
   background: var(--surface);
   border: 1px solid var(--border);

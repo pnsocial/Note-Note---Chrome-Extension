@@ -1,7 +1,7 @@
 /**
- * Áp data-theme trước khi stylesheet tải, để tab mới khớp theme đã lưu
- * (sau khi người dùng đổi theme trong tab trước đó).
- * Khóa phải trùng LS_THEME trong editor.js.
+ * Apply data-theme before stylesheet loads so the new tab matches the saved theme
+ * (after the user changed theme in a previous tab).
+ * Key must match LS_THEME in editor.js.
  */
 (function () {
   try {
@@ -10,6 +10,6 @@
       document.documentElement.setAttribute("data-theme", v);
     }
   } catch (e) {
-    /* bỏ qua — ví dụ localStorage không khả dụng */
+    /* ignore e.g. localStorage unavailable */
   }
 })();

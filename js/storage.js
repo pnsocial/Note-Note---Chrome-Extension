@@ -1,11 +1,11 @@
 /**
- * Lưu trữ ghi chú theo ngày trong chrome.storage.local.
- * Mỗi khóa là chuỗi YYYY-MM-DD (theo giờ địa phương của trình duyệt).
+ * Per-day notes in chrome.storage.local.
+ * Each key is YYYY-MM-DD (browser local time).
  */
 
 const STORAGE_KEY = "dailyMarkdownNotesV1";
 
-/** @returns {boolean} false sau khi extension reload / gỡ — API chrome không còn dùng được. */
+/** @returns {boolean} false after extension reload / uninstall — chrome APIs unavailable */
 export function isExtensionContextValid() {
   try {
     return Boolean(chrome?.runtime?.id);
@@ -40,7 +40,7 @@ export function loadNotes() {
 }
 
 /**
- * Ghi đè nội dung một ngày (chuỗi Markdown thuần).
+ * Overwrite one day’s content (plain Markdown string).
  * @param {string} dateKey YYYY-MM-DD
  * @param {string} text
  */

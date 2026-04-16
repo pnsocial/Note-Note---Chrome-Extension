@@ -1,5 +1,5 @@
 /**
- * Khởi tạo UI, chỉ cho phép sửa ngày hôm nay; tự lưu (debounce) và lưu khi rời tab.
+ * Bootstraps the UI: only today's note is editable; debounced save and save on tab leave.
  */
 
 import {
@@ -15,11 +15,11 @@ import { mountMiniCalendar } from "./mini-calendar.js";
 
 const DEBOUNCE_MS = 450;
 const LS_HISTORY_COLLAPSED = "dailyNoteHistoryCollapsed";
-/** @see js/theme-boot.js — giữ cùng khóa localStorage */
+/** @see js/theme-boot.js — must match localStorage key */
 const LS_THEME = "dailyNoteColorScheme";
 const SEARCH_DEBOUNCE_MS = 120;
 
-/** Phím tắt: Ctrl+Shift+… / ⌘⇧… — dùng ev.code (KeyY / KeyG) ổn định theo layout bàn phím */
+/** Shortcuts: Ctrl+Shift+… / ⌘⇧… — uses ev.code (KeyY / KeyG) for stable keyboard layout */
 const TITLE_SUFFIX_THEME = " (Ctrl+Shift+Y · ⌘⇧Y)";
 const TITLE_SUFFIX_SEARCH = " (Ctrl+Shift+G · ⌘⇧G)";
 
@@ -33,17 +33,17 @@ const ICON_CHEVRON_DOWN = `<svg class="toolbar-btn__icon" xmlns="http://www.w3.o
 
 const ICON_EXPORT_DOWNLOAD = `<svg class="note-export-btn__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
 
-/** Đã đăng ký listener chờ tab hiện lại để reload khi context chết. */
+/** Listener registered to reload when tab becomes visible after dead extension context. */
 let reloadWhenVisibleScheduled = false;
 
 /**
- * Sau khi Reload extension trên chrome://extensions, tab newtab cũ vẫn chạy
- * nhưng chrome.storage / runtime không còn hợp lệ — chỉ cần F5 / reload tab.
- * Khi tab đang ẩn (visibilitychange / lưu lúc chuyển tab), không gọi reload() ngay
- * — hoãn đến lần tab hiện lại để tránh cảnh báo/stack lạ trong chrome://extensions.
+ * After reloading the extension on chrome://extensions, the old new tab page may still run
+ * but chrome.storage / runtime is invalid — refresh the tab (F5).
+ * When the tab is hidden (visibilitychange / save on tab switch), avoid reload() immediately
+ * — defer until the tab is visible again to avoid odd warnings/stacks on chrome://extensions.
  * @param {unknown} [err]
- * @param {{ suppressReload?: boolean }} [opts] suppressReload: đang unload (pagehide/beforeunload), không reload.
- * @returns {boolean} true nếu context coi như chết (đã xử lý hoặc đã lên lịch reload).
+ * @param {{ suppressReload?: boolean }} [opts] suppressReload: during unload (pagehide/beforeunload), do not reload.
+ * @returns {boolean} true if the extension context is treated as dead (handled or reload scheduled).
  */
 function reloadIfExtensionContextDead(err, opts = {}) {
   const suppressReload = opts.suppressReload === true;
@@ -77,7 +77,7 @@ function reloadIfExtensionContextDead(err, opts = {}) {
   }
 
   console.warn(
-    "Extension vừa được tải lại — làm mới tab để lưu/đọc bình thường."
+    "Extension was reloaded — refresh this tab to save and load normally."
   );
   window.location.reload();
   return true;
@@ -91,13 +91,13 @@ function onVisibleMaybeReload() {
   reloadWhenVisibleScheduled = false;
   if (!isExtensionContextValid()) {
     console.warn(
-      "Extension vừa được tải lại — làm mới tab để lưu/đọc bình thường."
+      "Extension was reloaded — refresh this tab to save and load normally."
     );
     window.location.reload();
   }
 }
 
-/** @returns {string} YYYY-MM-DD theo giờ địa phương */
+/** @returns {string} YYYY-MM-DD in local time */
 function getLocalDateKey(d = new Date()) {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -154,11 +154,11 @@ function updateThemeToggleUi() {
   const dark = isEffectiveDarkTheme();
   els.btnThemeToggle.innerHTML = dark ? ICON_TOOLBAR_SUN : ICON_TOOLBAR_MOON;
   els.btnThemeToggle.title = `${
-    dark ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối"
+    dark ? "Switch to light theme" : "Switch to dark theme"
   }${TITLE_SUFFIX_THEME}`;
   els.btnThemeToggle.setAttribute(
     "aria-label",
-    dark ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối"
+    dark ? "Switch to light theme" : "Switch to dark theme"
   );
   els.btnThemeToggle.setAttribute("aria-pressed", dark ? "true" : "false");
 }
@@ -177,7 +177,7 @@ function initThemeFromStorage() {
     try {
       updateThemeToggleUi();
     } catch {
-      /* bỏ qua — không chặn init tab */
+      /* ignore — do not block tab init */
     }
   }
 }
@@ -271,7 +271,7 @@ const els = {
   ),
 };
 
-/** @returns {boolean} true = đang thu gọn (ẩn danh sách lịch sử) */
+/** @returns {boolean} true when history list is collapsed */
 function loadHistoryCollapsedPreference() {
   try {
     return localStorage.getItem(LS_HISTORY_COLLAPSED) === "1";
@@ -289,7 +289,7 @@ function saveHistoryCollapsedPreference(collapsed) {
 }
 
 let historyCollapsed = loadHistoryCollapsedPreference();
-/** Ô tìm kiếm đang mở (chỉ hiện sau khi nhấn icon kính lúp). */
+/** Search box is open (shown after clicking the search icon). */
 let searchPanelOpen = false;
 
 function applyHistoryCollapsedToDom() {
@@ -308,7 +308,7 @@ function applyHistoryCollapsedToDom() {
   els.btnHistoryToggle.innerHTML = visuallyExpanded
     ? ICON_CHEVRON_UP
     : ICON_CHEVRON_DOWN;
-  const historyLabel = visuallyExpanded ? "Thu gọn lịch sử" : "Mở lịch sử";
+  const historyLabel = visuallyExpanded ? "Collapse history" : "Expand history";
   els.btnHistoryToggle.title = historyLabel;
   els.btnHistoryToggle.setAttribute("aria-label", historyLabel);
 }
@@ -328,11 +328,11 @@ let searchDebounceTimer = null;
 /** @type {{ refresh: () => void } | null} */
 let miniCalendarApi = null;
 
-/** Popover lịch đang mở (đóng bằng Escape / click ra ngoài / chọn ngày). */
+/** Calendar popover open (closes on Escape / outside click / date pick). */
 let calendarPopoverOpen = false;
 
 /**
- * Đếm từ theo khoảng trắng (Markdown thuần).
+ * Word count by whitespace (plain Markdown).
  * @param {string} s
  */
 function countWords(s) {
@@ -344,7 +344,7 @@ function countWords(s) {
 }
 
 /**
- * Ước lượng thời gian đọc (~200 từ/phút).
+ * Estimated reading time (~200 words per minute).
  * @param {number} words
  */
 function readingMinutesFromWords(words) {
@@ -359,10 +359,10 @@ function updateWordStats() {
   const words = countWords(raw);
   const mins = readingMinutesFromWords(words);
   if (els.wordStatsCount) {
-    els.wordStatsCount.textContent = words.toLocaleString("vi-VN");
+    els.wordStatsCount.textContent = words.toLocaleString("en-US");
   }
   if (els.wordStatsRead) {
-    els.wordStatsRead.textContent = mins.toLocaleString("vi-VN");
+    els.wordStatsRead.textContent = mins.toLocaleString("en-US");
   }
 }
 
@@ -377,8 +377,8 @@ function closeCalendarPopover() {
   if (els.btnCalendarToggle) {
     els.btnCalendarToggle.setAttribute("aria-expanded", "false");
     els.btnCalendarToggle.title =
-      "Lịch tháng — nhấp ngày để cuộn tới ghi chú";
-    els.btnCalendarToggle.setAttribute("aria-label", "Mở lịch tháng");
+      "Month calendar — click a day to scroll to that note";
+    els.btnCalendarToggle.setAttribute("aria-label", "Open month calendar");
   }
 }
 
@@ -389,8 +389,8 @@ function openCalendarPopover() {
   calendarPopoverOpen = true;
   els.calendarPopover.hidden = false;
   els.btnCalendarToggle.setAttribute("aria-expanded", "true");
-  els.btnCalendarToggle.title = "Đóng lịch tháng";
-  els.btnCalendarToggle.setAttribute("aria-label", "Đóng lịch tháng");
+  els.btnCalendarToggle.title = "Close month calendar";
+  els.btnCalendarToggle.setAttribute("aria-label", "Close month calendar");
   miniCalendarApi?.refresh();
 }
 
@@ -497,13 +497,13 @@ async function exportAllNotesZip() {
     const merged = getMergedNotesSnapshot();
     const stamp = getLocalDateKey().replace(/-/g, "");
     if (!downloadNotesAsZip(merged, `daily-notes-${stamp}`)) {
-      window.alert("Không có ghi chú nào để đóng gói ZIP.");
+      window.alert("No notes to include in the ZIP.");
     }
   } catch (err) {
     if (reloadIfExtensionContextDead(err)) {
       return;
     }
-    window.alert("Không tạo được file ZIP.");
+    window.alert("Could not create the ZIP file.");
   }
 }
 
@@ -515,7 +515,7 @@ function setMeta() {
     month: "long",
     day: "numeric",
   };
-  els.metaLine.textContent = `${now.toLocaleDateString("vi-VN", opts)} · ${currentTodayKey}`;
+  els.metaLine.textContent = `${now.toLocaleDateString("en-US", opts)} · ${currentTodayKey}`;
 }
 
 function renderLegacy() {
@@ -540,14 +540,14 @@ function renderLegacy() {
       els.searchHint.hidden = false;
       const nLegacy = pastFiltered.length;
       if (todayMatch && nLegacy > 0) {
-        els.searchHint.textContent = `Có khớp trong ghi chú hôm nay (phía trên). ${nLegacy} ngày trong lịch sử khớp.`;
+        els.searchHint.textContent = `Match in today’s note (above). ${nLegacy} day(s) in history match.`;
       } else if (todayMatch && nLegacy === 0) {
         els.searchHint.textContent =
-          "Chỉ khớp trong ghi chú hôm nay (phía trên).";
+          "Only today’s note (above) matches.";
       } else if (!todayMatch && nLegacy > 0) {
-        els.searchHint.textContent = `${nLegacy} ngày trong lịch sử khớp.`;
+        els.searchHint.textContent = `${nLegacy} day(s) in history match.`;
       } else {
-        els.searchHint.textContent = "Không có kết quả.";
+        els.searchHint.textContent = "No results.";
       }
     }
   }
@@ -563,7 +563,7 @@ function renderLegacy() {
     const empty = document.createElement("p");
     empty.className = "hint legacy-search-empty";
     empty.textContent =
-      "Không có ngày nào trong lịch sử khớp với từ khóa này.";
+      "No history days match this search.";
     els.legacyEntries.append(empty);
   }
 
@@ -586,13 +586,13 @@ function renderLegacy() {
     exportBtn.type = "button";
     exportBtn.className = "note-export-btn note-export-btn--icon";
     exportBtn.innerHTML = ICON_EXPORT_DOWNLOAD;
-    exportBtn.setAttribute("title", `Tải ${dateKey}.md`);
-    exportBtn.setAttribute("aria-label", `Xuất ghi chú ${dateKey} ra file Markdown`);
+    exportBtn.setAttribute("title", `Download ${dateKey}.md`);
+    exportBtn.setAttribute("aria-label", `Export note ${dateKey} as Markdown`);
     exportBtn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
       if (!exportSingleMarkdownFile(dateKey, text)) {
-        window.alert("Không có nội dung để xuất.");
+        window.alert("Nothing to export.");
       }
     });
 
@@ -638,8 +638,8 @@ function openSearchPanel() {
   }
   if (els.btnSearchToggle) {
     els.btnSearchToggle.setAttribute("aria-expanded", "true");
-    els.btnSearchToggle.title = `Đóng ô tìm kiếm${TITLE_SUFFIX_SEARCH}`;
-    els.btnSearchToggle.setAttribute("aria-label", "Đóng ô tìm kiếm");
+    els.btnSearchToggle.title = `Close search${TITLE_SUFFIX_SEARCH}`;
+    els.btnSearchToggle.setAttribute("aria-label", "Close search");
   }
   flushSearchRerender();
   window.setTimeout(() => els.noteSearch?.focus(), 0);
@@ -655,8 +655,8 @@ function closeSearchPanel() {
   }
   if (els.btnSearchToggle) {
     els.btnSearchToggle.setAttribute("aria-expanded", "false");
-    els.btnSearchToggle.title = `Tìm trong ghi chú${TITLE_SUFFIX_SEARCH}`;
-    els.btnSearchToggle.setAttribute("aria-label", "Tìm trong ghi chú");
+    els.btnSearchToggle.title = `Search notes${TITLE_SUFFIX_SEARCH}`;
+    els.btnSearchToggle.setAttribute("aria-label", "Search notes");
   }
   flushSearchRerender();
 }
@@ -670,7 +670,7 @@ function toggleSearchPanel() {
 }
 
 /**
- * Phím nhanh: Ctrl/Cmd+Shift+Y đổi theme, Ctrl/Cmd+Shift+G mở/đóng tìm kiếm.
+ * Shortcuts: Ctrl/Cmd+Shift+Y toggles theme, Ctrl/Cmd+Shift+G toggles search.
  * @param {KeyboardEvent} ev
  */
 function onGlobalShortcut(ev) {
@@ -732,7 +732,7 @@ function showRendered(opts = {}) {
 function applyTodayEditor() {
   const text = notesCache[currentTodayKey] ?? "";
   els.todayEditor.value = text;
-  els.todayHeading.textContent = `Hôm nay · ${currentTodayKey}`;
+  els.todayHeading.textContent = `Today · ${currentTodayKey}`;
   if (String(text).trim() === "") {
     showEditor({ focus: false });
   } else {
@@ -768,7 +768,7 @@ function flushSave(opts = {}) {
     if (reloadIfExtensionContextDead(err, { suppressReload })) {
       return;
     }
-    console.error("Lưu thất bại:", err);
+    console.error("Save failed:", err);
   });
 }
 
@@ -779,7 +779,7 @@ async function refreshFromStorage() {
     if (reloadIfExtensionContextDead(err)) {
       return;
     }
-    console.error("Đọc dữ liệu thất bại:", err);
+    console.error("Failed to load data:", err);
     notesCache = {};
   }
   setMeta();
@@ -830,14 +830,14 @@ async function exportTodayNote() {
     await flushSave();
     const raw = notesCache[currentTodayKey] ?? els.todayEditor.value;
     if (!exportSingleMarkdownFile(currentTodayKey, raw)) {
-      window.alert("Ghi chú hôm nay đang trống — không có file để tải.");
+      window.alert("Today’s note is empty — nothing to download.");
     }
   } catch (err) {
     if (reloadIfExtensionContextDead(err)) {
       return;
     }
-    console.error("Export thất bại:", err);
-    window.alert("Không xuất được file. Thử lại sau.");
+    console.error("Export failed:", err);
+    window.alert("Could not export the file. Try again later.");
   }
 }
 
@@ -907,7 +907,7 @@ function init() {
   );
 
   if (els.btnSearchToggle) {
-    els.btnSearchToggle.title = `Tìm trong ghi chú${TITLE_SUFFIX_SEARCH}`;
+    els.btnSearchToggle.title = `Search notes${TITLE_SUFFIX_SEARCH}`;
     els.btnSearchToggle.addEventListener("click", () => {
       toggleSearchPanel();
     });
