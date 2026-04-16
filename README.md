@@ -10,9 +10,20 @@ Extension thay **tab mới** bằng một sổ ghi **Markdown theo ngày**, lưu
 - **Giao diện sáng/tối**, thống kê **số từ / thời gian đọc** gần tiêu đề ngày.
 - Phím tắt: **Ctrl/⌘ + Shift + Y** (theme), **Ctrl/⌘ + Shift + G** (ô tìm kiếm).
 
+## Tải bản phát hành (ZIP — cài Chrome)
+
+Bản build chính thức nằm trong **GitHub Releases** (file ZIP đính kèm, không hết hạn như Artifact của Actions):
+
+1. Mở trang [**Releases**](https://github.com/pnsocial/Note-Note---Chrome-Extension/releases) → chọn bản mới nhất hoặc [**Latest**](https://github.com/pnsocial/Note-Note---Chrome-Extension/releases/latest).
+2. Trong mục **Assets**, tải `daily-markdown-note-<phiên_bản>.zip`.
+3. Giải nén — thư mục gốc (cấp đầu tiên sau khi giải nén) phải có `manifest.json`.
+4. Chrome → `chrome://extensions` → bật **Chế độ dành cho nhà phát triển** → **Tải tiện ích đã giải nén** → chọn thư mục đó.
+
+> ZIP trong Release được tạo bởi workflow [**Release**](.github/workflows/release.yml) mỗi khi có **tag** dạng `v*` trùng với trường `"version"` trong `manifest.json` (ví dụ manifest `1.0.0` → tag `v1.0.0`).
+
 ## Cài từ mã nguồn
 
-1. Clone repo hoặc tải ZIP từ GitHub.
+1. Clone repo hoặc tải ZIP mã nguồn từ GitHub (khác với ZIP extension ở Releases).
 2. Mở Chrome → `chrome://extensions` → bật **Chế độ dành cho nhà phát triển**.
 3. **Tải tiện ích đã giải nén** → chọn thư mục gốc của project (chứa `manifest.json`).
 
@@ -29,6 +40,25 @@ Extension thay **tab mới** bằng một sổ ghi **Markdown theo ngày**, lưu
 Dự án **không dùng npm / bundler** — chạy trực tiếp trong trình duyệt.
 
 ## Build trên GitHub
+
+### Release (ZIP cho người dùng)
+
+Khi bạn **đẩy tag** `v<version>` trùng với `"version"` trong `manifest.json`, workflow [**Release**](.github/workflows/release.yml) sẽ:
+
+1. Kiểm tra tag khớp phiên bản manifest.
+2. Tạo file `daily-markdown-note-<version>.zip`.
+3. Tạo **GitHub Release** và đính kèm ZIP vào **Assets**.
+
+Ví dụ phát hành bản `1.0.0` (đã có trong `manifest.json`):
+
+```bash
+git add manifest.json && git commit -m "Bump version 1.0.0"  # nếu vừa đổi version
+git push origin main
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+### Build kiểm tra (mỗi push `main`)
 
 Workflow [**Build**](.github/workflows/build.yml) chạy tự động khi **push** hoặc **pull request** vào nhánh `main`:
 

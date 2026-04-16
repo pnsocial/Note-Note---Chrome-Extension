@@ -1,0 +1,61 @@
+# Khi push tag v<phiên_bản> (trùng manifest.json "version"), tạo GitHub Release + ZIP cài Chrome.
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Kiểm tra tag khớp manifest.json
+        id: meta
+        run: |
+          set -euo pipefail
+          M=$(python3 -c "import json; print(json.load(open('manifest.json'))['version'])")
+          TAG="${GITHUB_REF_NAME}"
+          if [[ "$TAG" != "v${M}" ]]; then
+            echo "::error::Tag phải là v + đúng trường \"version\" trong manifest.json. manifest=$M tag=$TAG (ví dụ: git tag v${M})"
+            exit 1
+          fi
+          echo "manifest_version=${M}" >> "$GITHUB_OUTPUT"
+          echo "zip_name=daily-markdown-note-${M}.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Đóng gói extension (ZIP)
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          zip -r "dist/${{ steps.meta.outputs.zip_name }}" \
+            manifest.json \
+            newtab.html \
+            css \
+            js \
+            icons
+
+      - name: Tạo GitHub Release + đính kèm ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          ZIP="dist/${{ steps.meta.outputs.zip_name }}"
+          cat > release_notes.md << EOF
+          ## Cài đặt trên Chrome
+
+          1. Trong mục **Assets** bên dưới, tải file \`${{ steps.meta.outputs.zip_name }}\`.
+          2. Giải nén — thư mục gốc (cấp đầu tiên) phải có \`manifest.json\`.
+          3. Mở \`chrome://extensions\` → bật **Chế độ dành cho nhà phát triển** → **Tải tiện ích đã giải nén** → chọn thư mục đã giải nén.
+
+          Phiên bản: **${{ steps.meta.outputs.manifest_version }}** (tag \`${TAG}\`).
+          EOF
+          gh release create "$TAG" "$ZIP" \
+            --title "Daily Markdown Note ${TAG}" \
+            --notes-file release_notes.md
